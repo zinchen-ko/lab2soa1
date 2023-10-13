@@ -1,7 +1,9 @@
 package com.soa.lab2soa.service;
 
 import com.soa.lab2soa.dto.GroupRequest;
+import com.soa.lab2soa.model.Coordinates;
 import com.soa.lab2soa.model.StudyGroup;
+import com.soa.lab2soa.repo.CoordinatesRepository;
 import com.soa.lab2soa.repo.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,10 @@ import java.util.Optional;
 public class GroupService {
 
     private final GroupRepository groupRepository;
+    private final CoordinatesRepository coordinatesRepository;
 
-    public GroupService(GroupRepository groupRepository) {
+    public GroupService(GroupRepository groupRepository, CoordinatesRepository coordinatesRepository) {
+        this.coordinatesRepository = coordinatesRepository;
         this.groupRepository = groupRepository;
     }
 
@@ -56,8 +60,9 @@ public class GroupService {
     }
 
     public StudyGroup getGroupSmallestCoordinate() {
-        List<StudyGroup> studyGroupList = groupRepository.findAll
-        return null;
+        List<Coordinates> coordinatesList = coordinatesRepository.findLessCoordinates();
+        Optional<StudyGroup> studyGroup = groupRepository.findByCoordinates(coordinatesList.get(0));
+        return studyGroup.get();
     }
 
     public Optional<Integer> deleteAllByAverageMark(int averageMark) {
