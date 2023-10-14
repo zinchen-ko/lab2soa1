@@ -2,9 +2,11 @@ package com.soa.lab2soa.service;
 
 import com.soa.lab2soa.dto.GroupRequest;
 import com.soa.lab2soa.model.Coordinates;
+import com.soa.lab2soa.model.Person;
 import com.soa.lab2soa.model.StudyGroup;
 import com.soa.lab2soa.repo.CoordinatesRepository;
 import com.soa.lab2soa.repo.GroupRepository;
+import com.soa.lab2soa.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +19,22 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final CoordinatesRepository coordinatesRepository;
 
-    public GroupService(GroupRepository groupRepository, CoordinatesRepository coordinatesRepository) {
+    private final PersonRepository personRepository;
+
+    public GroupService(GroupRepository groupRepository, CoordinatesRepository coordinatesRepository, PersonRepository personRepository) {
         this.coordinatesRepository = coordinatesRepository;
         this.groupRepository = groupRepository;
+        this.personRepository = personRepository;
     }
 
     public Optional<StudyGroup> getGroupById(long id) {
         return groupRepository.findById(id);
     }
 
-    public void save(StudyGroup studyGroup) {
+    public void save(StudyGroup studyGroup, Person admin, Coordinates coordinates) {
         try {
+            personRepository.save(admin);
+            coordinatesRepository.save(coordinates);
             groupRepository.save(studyGroup);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -37,12 +44,24 @@ public class GroupService {
     public StudyGroup updateGroup(long id, GroupRequest groupRequest) {
         Optional<StudyGroup> studyGroupOptional = groupRepository.findById(id);
         StudyGroup studyGroup = studyGroupOptional.get();
+        Person admin = studyGroup.getGroupAdmin();
+        admin.setName(groupRequest.getGroupAdmin().getName());
+        admin.setBirthday(groupRequest.getGroupAdmin().getBirthday());
+        admin.setHeight(groupRequest.getGroupAdmin().getHeight());
+        admin.setWeight(groupRequest.getGroupAdmin().getWeight());
+        admin.setPassportID(groupRequest.getGroupAdmin().getPassportID());
+        Coordinates coordinates = groupRequest.getCoordinates();
+        coordinates.setX(groupRequest.getCoordinates().getX());
+        coordinates.setY(groupRequest.getCoordinates().getY());
         studyGroup.setName(groupRequest.getName());
-        studyGroup.setCoordinates(groupRequest.getCoordinates());
+        studyGroup.setCoordinates(coordinates);
         studyGroup.setAverageMark(groupRequest.getAverageMark());
         studyGroup.setStudentsCount(groupRequest.getStudentsCount());
         studyGroup.setSemesterEnum(groupRequest.getSemesterEnum());
         studyGroup.setTransferredStudents(groupRequest.getTransferredStudents());
+        studyGroup.setGroupAdmin(admin);
+        coordinatesRepository.save(coordinates);
+        personRepository.save(admin);
         groupRepository.save(studyGroup);
         return studyGroup;
     }

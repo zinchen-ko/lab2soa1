@@ -2,6 +2,8 @@ package com.soa.lab2soa.controller;
 
 
 import com.soa.lab2soa.dto.GroupRequest;
+import com.soa.lab2soa.model.Coordinates;
+import com.soa.lab2soa.model.Person;
 import com.soa.lab2soa.model.StudyGroup;
 import com.soa.lab2soa.service.GroupService;
 import org.springframework.http.HttpStatus;
@@ -36,17 +38,26 @@ public class GroupController {
     public StudyGroup addGroup(@RequestBody GroupRequest groupRequest) {
         try {
             ZonedDateTime creationDate = ZonedDateTime.now();
+            Coordinates coordinates = new Coordinates(groupRequest.getCoordinates().getX(), groupRequest.getCoordinates().getY());
+            Person admin = new Person(
+                    groupRequest.getGroupAdmin().getName(),
+                    groupRequest.getGroupAdmin().getBirthday(),
+                    groupRequest.getGroupAdmin().getWeight(),
+                    groupRequest.getGroupAdmin().getHeight(),
+                    groupRequest.getGroupAdmin().getPassportID()
+            );
+
             StudyGroup studyGroup = new StudyGroup(
                     groupRequest.getName(),
-                    groupRequest.getCoordinates(),
+                    coordinates,
                     creationDate,
                     groupRequest.getStudentsCount(),
                     groupRequest.getTransferredStudents(),
                     groupRequest.getAverageMark(),
                     groupRequest.getSemesterEnum(),
-                    groupRequest.getGroupAdmin()
+                    admin
             );
-            groupService.save(studyGroup);
+            groupService.save(studyGroup, admin, coordinates);
             return studyGroup;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -74,7 +85,7 @@ public class GroupController {
         }
     }
 
-    @GetMapping()
+    @GetMapping("/study-groups")
     public List<StudyGroup> getGroups() {
         try {
             return groupService.getGroups();
@@ -83,7 +94,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping()
+    @PostMapping("/smallest-coordinates")
     public StudyGroup getGroupSmallestCoordinate() {
          try {
              return groupService.getGroupSmallestCoordinate();
@@ -92,7 +103,7 @@ public class GroupController {
          }
     }
 
-    @PostMapping("/{averageMark}")
+    @PostMapping("delete-all-by-average-mark/{averageMark}")
     public Integer deleteAllByAverageMark(@PathVariable int averageMark) {
         try {
             Optional<Integer> numberOfDeletedGroups = groupService.deleteAllByAverageMark(averageMark);
@@ -102,7 +113,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/{transferredStudents}")
+    @PostMapping("transferred-students-less-than/{transferredStudents}")
     public List<StudyGroup> getGroupsTransferredStudentsLess(@PathVariable int transferredStudents) {
          try {
              return groupService.getGroupsTransferredStudentsLess(transferredStudents);

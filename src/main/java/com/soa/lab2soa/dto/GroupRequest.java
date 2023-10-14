@@ -9,7 +9,6 @@ import lombok.Data;
 public class GroupRequest {
     private String name;
     private Coordinates coordinates;
-    private java.time.ZonedDateTime creationDate;
     private long studentsCount;
     private long transferredStudents;
     private int averageMark;

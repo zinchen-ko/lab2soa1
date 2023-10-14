@@ -2,6 +2,7 @@ package com.soa.lab2soa.repo;
 
 import com.soa.lab2soa.model.Coordinates;
 import com.soa.lab2soa.model.StudyGroup;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public interface GroupRepository extends JpaRepository<StudyGroup, Long> {
     Optional<StudyGroup> findById(long id);
 
+    @Transactional
     void deleteAllByAverageMark(int averageMark);
 
     List<StudyGroup> findAllByAverageMark(int averageMark);
