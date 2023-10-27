@@ -75,6 +75,7 @@ public class GroupService {
     }
 
     public List<StudyGroup> getGroups() {
+        System.out.println("Hello World!");
         return groupRepository.findAll();
     }
 

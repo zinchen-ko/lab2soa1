@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -17,12 +18,12 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private java.time.ZonedDateTime birthday;
+    private Date birthday;
     private Float weight;
     private Float height;
     private String passportID;
 
-    public Person(String name, ZonedDateTime birthday, Float weight, Float height, String passportID) {
+    public Person(String name, Date birthday, Float weight, Float height, String passportID) {
         this.name = name;
         this.birthday = birthday;
         this.weight = weight;

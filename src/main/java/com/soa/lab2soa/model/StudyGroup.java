@@ -8,7 +8,8 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -26,7 +27,7 @@ public class StudyGroup {
     private Coordinates coordinates; //Поле не может быть null
 
     @NotNull
-    private java.time.ZonedDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     @NotNull
     private long studentsCount; //Значение поля должно быть больше 0
     @NotNull
@@ -40,7 +41,7 @@ public class StudyGroup {
     @JoinColumn(name = "person_id")
     private Person groupAdmin; //Поле не может быть null
 
-    public StudyGroup(String name, Coordinates coordinates, ZonedDateTime creationDate, long studentsCount, long transferredStudents, int averageMark, Semester semesterEnum, Person groupAdmin) {
+    public StudyGroup(String name, Coordinates coordinates, Date creationDate, long studentsCount, long transferredStudents, int averageMark, Semester semesterEnum, Person groupAdmin) {
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = creationDate;

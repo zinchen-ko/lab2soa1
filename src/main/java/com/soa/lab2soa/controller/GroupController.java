@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +39,7 @@ public class GroupController {
     @PostMapping()
     public StudyGroup addGroup(@RequestBody GroupRequest groupRequest) {
         try {
-            ZonedDateTime creationDate = ZonedDateTime.now();
+            Date creationDate = new Date();
             Coordinates coordinates = new Coordinates(groupRequest.getCoordinates().getX(), groupRequest.getCoordinates().getY());
             Person admin = new Person(
                     groupRequest.getGroupAdmin().getName(),
