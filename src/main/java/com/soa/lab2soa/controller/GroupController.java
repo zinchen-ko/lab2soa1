@@ -1,10 +1,12 @@
 package com.soa.lab2soa.controller;
 
 
+import com.soa.lab2soa.common.Constants;
 import com.soa.lab2soa.dto.GroupRequest;
 import com.soa.lab2soa.model.Coordinates;
 import com.soa.lab2soa.model.Person;
 import com.soa.lab2soa.model.StudyGroup;
+import com.soa.lab2soa.model.StudyGroupPage;
 import com.soa.lab2soa.service.GroupService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/groups")
+@CrossOrigin
 public class GroupController {
 
     private final GroupService groupService;
@@ -36,7 +39,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping()
+    @PostMapping("/")
     public StudyGroup addGroup(@RequestBody GroupRequest groupRequest) {
         try {
             Date creationDate = new Date();
@@ -87,10 +90,13 @@ public class GroupController {
         }
     }
 
-    @GetMapping("/study-groups")
-    public List<StudyGroup> getGroups() {
+    @GetMapping("/")
+    public StudyGroupPage getGroups(
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int page,
+            @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) int pageSize
+    ) {
         try {
-            return groupService.getGroups();
+            return groupService.getGroups(page, pageSize);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

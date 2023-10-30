@@ -3,6 +3,8 @@ package com.soa.lab2soa.repo;
 import com.soa.lab2soa.model.Coordinates;
 import com.soa.lab2soa.model.StudyGroup;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,5 +29,8 @@ public interface GroupRepository extends JpaRepository<StudyGroup, Long> {
 
 
     Optional<StudyGroup> findByCoordinates(Coordinates coordinates);
+
+    @Query("SELECT c FROM StudyGroup c")
+    Page<StudyGroup> findAllPageable(Pageable pageable);
 
 }

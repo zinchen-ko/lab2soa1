@@ -4,10 +4,14 @@ import com.soa.lab2soa.dto.GroupRequest;
 import com.soa.lab2soa.model.Coordinates;
 import com.soa.lab2soa.model.Person;
 import com.soa.lab2soa.model.StudyGroup;
+import com.soa.lab2soa.model.StudyGroupPage;
 import com.soa.lab2soa.repo.CoordinatesRepository;
 import com.soa.lab2soa.repo.GroupRepository;
 import com.soa.lab2soa.repo.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,9 +78,17 @@ public class GroupService {
         return Optional.empty();
     }
 
-    public List<StudyGroup> getGroups() {
-        System.out.println("Hello World!");
-        return groupRepository.findAll();
+    public StudyGroupPage getGroups(int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<StudyGroup> studyGroupPage = groupRepository.findAllPageable(pageable);
+
+        return new StudyGroupPage(
+                studyGroupPage.toList(),
+                studyGroupPage.getNumber(),
+                studyGroupPage.getSize(),
+                studyGroupPage.getTotalPages(),
+                studyGroupPage.getTotalElements()
+        );
     }
 
     public StudyGroup getGroupSmallestCoordinate() {
