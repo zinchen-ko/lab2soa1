@@ -1,7 +1,7 @@
 package com.soa.lab2soa.repo;
 
-import com.soa.lab2soa.model.Coordinates;
-import com.soa.lab2soa.model.StudyGroup;
+import com.soa.lab2soa.model.domain.Coordinates;
+import com.soa.lab2soa.model.domain.StudyGroup;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

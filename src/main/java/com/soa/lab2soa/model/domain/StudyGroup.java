@@ -1,5 +1,8 @@
-package com.soa.lab2soa.model;
+package com.soa.lab2soa.model.domain;
 
+import com.soa.lab2soa.model.domain.Coordinates;
+import com.soa.lab2soa.model.domain.Person;
+import com.soa.lab2soa.model.domain.Semester;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +11,6 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter

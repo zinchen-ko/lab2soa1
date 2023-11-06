@@ -1,4 +1,4 @@
-package com.soa.lab2soa.model;
+package com.soa.lab2soa.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

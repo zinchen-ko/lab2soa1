@@ -1,8 +1,8 @@
-package com.soa.lab2soa.dto;
+package com.soa.lab2soa.model.requests;
 
-import com.soa.lab2soa.model.Coordinates;
-import com.soa.lab2soa.model.Person;
-import com.soa.lab2soa.model.Semester;
+import com.soa.lab2soa.model.domain.Coordinates;
+import com.soa.lab2soa.model.domain.Person;
+import com.soa.lab2soa.model.domain.Semester;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

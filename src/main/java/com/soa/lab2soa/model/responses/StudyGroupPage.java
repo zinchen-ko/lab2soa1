@@ -1,5 +1,6 @@
-package com.soa.lab2soa.model;
+package com.soa.lab2soa.model.responses;
 
+import com.soa.lab2soa.model.domain.StudyGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

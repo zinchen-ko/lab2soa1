@@ -2,18 +2,18 @@ package com.soa.lab2soa.controller;
 
 
 import com.soa.lab2soa.common.Constants;
-import com.soa.lab2soa.dto.GroupRequest;
-import com.soa.lab2soa.model.Coordinates;
-import com.soa.lab2soa.model.Person;
-import com.soa.lab2soa.model.StudyGroup;
-import com.soa.lab2soa.model.StudyGroupPage;
+import com.soa.lab2soa.model.requests.GroupRequest;
+import com.soa.lab2soa.model.domain.Coordinates;
+import com.soa.lab2soa.model.domain.Person;
+import com.soa.lab2soa.model.domain.StudyGroup;
+import com.soa.lab2soa.model.requests.SortParam;
+import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.service.GroupService;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping()
     public StudyGroup addGroup(@RequestBody GroupRequest groupRequest) {
         try {
             Date creationDate = new Date();
@@ -90,12 +90,24 @@ public class GroupController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping()
     public StudyGroupPage getGroups(
+            @RequestParam(value = "sortBy", required = false) Optional<String> sort,
+            @RequestParam(value = "sortDir", required = false) Optional<String> sortOrder,
             @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int page,
             @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) int pageSize
     ) {
         try {
+            if (sort.isPresent() && sortOrder.isPresent()) {
+                SortParam sortParam = SortParam.fromString(sort.get());
+                Sort.Direction sortDir = Sort.Direction.fromString(sortOrder.get());
+                return groupService.getGroups(
+                        sortParam,
+                        sortDir,
+                        page,
+                        pageSize
+                );
+            }
             return groupService.getGroups(page, pageSize);
         } catch (Exception e) {
             throw new RuntimeException(e);
