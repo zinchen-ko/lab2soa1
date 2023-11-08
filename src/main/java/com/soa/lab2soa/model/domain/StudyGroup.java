@@ -3,6 +3,8 @@ package com.soa.lab2soa.model.domain;
 import com.soa.lab2soa.model.domain.Coordinates;
 import com.soa.lab2soa.model.domain.Person;
 import com.soa.lab2soa.model.domain.Semester;
+import com.soa.lab2soa.model.requests.GroupFilters;
+import com.soa.lab2soa.model.requests.GroupView;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,11 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -31,11 +38,11 @@ public class StudyGroup {
     @NotNull
     private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     @NotNull
-    private long studentsCount; //Значение поля должно быть больше 0
+    private Long studentsCount; //Значение поля должно быть больше 0
     @NotNull
-    private long transferredStudents; //Значение поля должно быть больше 0
+    private Long transferredStudents; //Значение поля должно быть больше 0
     @NotNull
-    private int averageMark; //Значение поля должно быть больше 0
+    private Integer averageMark; //Значение поля должно быть больше 0
     @NotNull
     private Semester semesterEnum; //Поле может быть null
     @OneToOne
@@ -43,7 +50,7 @@ public class StudyGroup {
     @JoinColumn(name = "person_id")
     private Person groupAdmin; //Поле не может быть null
 
-    public StudyGroup(String name, Coordinates coordinates, Date creationDate, long studentsCount, long transferredStudents, int averageMark, Semester semesterEnum, Person groupAdmin) {
+    public StudyGroup(String name, Coordinates coordinates, Date creationDate, Long studentsCount, Long transferredStudents, Integer averageMark, Semester semesterEnum, Person groupAdmin) {
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = creationDate;
@@ -52,5 +59,43 @@ public class StudyGroup {
         this.averageMark = averageMark;
         this.semesterEnum = semesterEnum;
         this.groupAdmin = groupAdmin;
+    }
+
+    public static StudyGroup fromView(GroupView groupView) {
+        return new StudyGroup(
+                groupView.getName(),
+                groupView.getCoordinates(),
+                null,
+                groupView.getStudentsCount(),
+                groupView.getTransferredStudents(),
+                groupView.getAverageMark(),
+                Semester.fromString(groupView.getSemester()),
+                groupView.getGroupAdmin()
+        );
+    }
+
+    public static StudyGroup fromFilters(GroupFilters filters) {
+        StudyGroup studyGroup = new StudyGroup();
+
+        Person groupAdmin = new Person();
+        groupAdmin.setName(filters.getAdminName());
+        studyGroup.setGroupAdmin(groupAdmin);
+
+        Coordinates coordinates = new Coordinates(filters.getCoordinateX(), filters.getCoordinateY());
+        studyGroup.setCoordinates(coordinates);
+
+        studyGroup.setId(filters.getId());
+        studyGroup.setName(filters.getGroupName());
+        studyGroup.setStudentsCount(filters.getStudentsCount());
+        studyGroup.setTransferredStudents(filters.getTransferredStudents());
+        studyGroup.setAverageMark(filters.getAverageMark());
+        studyGroup.setCreationDate(filters.getCreationDate());
+        studyGroup.setCreationDate(filters.getCreationDate());
+
+        if (filters.getSemester() != null) {
+            studyGroup.setSemesterEnum(Semester.fromString(filters.getSemester()));
+        }
+
+        return studyGroup;
     }
 }

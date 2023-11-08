@@ -17,7 +17,7 @@ public class Coordinates {
     private Long x; //Поле не может быть null
     private Float y; //Поле не может быть null
 
-    public Coordinates(long x, float y) {
+    public Coordinates(Long x, Float y) {
         this.x = x;
         this.y = y;
     }

@@ -2,7 +2,9 @@ package com.soa.lab2soa.controller;
 
 
 import com.soa.lab2soa.common.Constants;
-import com.soa.lab2soa.model.requests.GroupRequest;
+import com.soa.lab2soa.model.domain.Semester;
+import com.soa.lab2soa.model.requests.GroupFilters;
+import com.soa.lab2soa.model.requests.GroupView;
 import com.soa.lab2soa.model.domain.Coordinates;
 import com.soa.lab2soa.model.domain.Person;
 import com.soa.lab2soa.model.domain.StudyGroup;
@@ -40,29 +42,29 @@ public class GroupController {
     }
 
     @PostMapping()
-    public StudyGroup addGroup(@RequestBody GroupRequest groupRequest) {
+    public StudyGroup addGroup(@RequestBody GroupView groupView) {
         try {
             Date creationDate = new Date();
-            Coordinates coordinates = new Coordinates(groupRequest.getCoordinates().getX(), groupRequest.getCoordinates().getY());
-            Person admin = new Person(
-                    groupRequest.getGroupAdmin().getName(),
-                    groupRequest.getGroupAdmin().getBirthday(),
-                    groupRequest.getGroupAdmin().getWeight(),
-                    groupRequest.getGroupAdmin().getHeight(),
-                    groupRequest.getGroupAdmin().getPassportID()
+            Coordinates coordinates = new Coordinates(groupView.getCoordinates().getX(), groupView.getCoordinates().getY());
+            Person groupAdmin = new Person(
+                    groupView.getGroupAdmin().getName(),
+                    groupView.getGroupAdmin().getBirthday(),
+                    groupView.getGroupAdmin().getWeight(),
+                    groupView.getGroupAdmin().getHeight(),
+                    groupView.getGroupAdmin().getPassportID()
             );
 
             StudyGroup studyGroup = new StudyGroup(
-                    groupRequest.getName(),
+                    groupView.getName(),
                     coordinates,
                     creationDate,
-                    groupRequest.getStudentsCount(),
-                    groupRequest.getTransferredStudents(),
-                    groupRequest.getAverageMark(),
-                    groupRequest.getSemesterEnum(),
-                    admin
+                    groupView.getStudentsCount(),
+                    groupView.getTransferredStudents(),
+                    groupView.getAverageMark(),
+                    Semester.fromString(groupView.getSemester()),
+                    groupAdmin
             );
-            groupService.save(studyGroup, admin, coordinates);
+            groupService.save(studyGroup, groupAdmin, coordinates);
             return studyGroup;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -70,9 +72,9 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public StudyGroup updateGroup(@PathVariable long id, @RequestBody GroupRequest groupRequest) {
+    public StudyGroup updateGroup(@PathVariable long id, @RequestBody GroupView groupView) {
         try {
-            StudyGroup studyGroup = groupService.updateGroup(id, groupRequest);
+            StudyGroup studyGroup = groupService.updateGroup(id, groupView);
             if (studyGroup == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             return studyGroup;
         } catch (Exception e) {
@@ -102,16 +104,39 @@ public class GroupController {
                 SortParam sortParam = SortParam.fromString(sort.get());
                 Sort.Direction sortDir = Sort.Direction.fromString(sortOrder.get());
                 return groupService.getGroups(
-                        sortParam,
-                        sortDir,
                         page,
-                        pageSize
+                        pageSize,
+                        sortParam,
+                        sortDir
                 );
             }
             return groupService.getGroups(page, pageSize);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    @PostMapping("/filtered")
+    public StudyGroupPage getFilteredGroups(
+            @RequestBody GroupFilters filters,
+            @RequestParam(value = "sortBy", required = false) Optional<String> sort,
+            @RequestParam(value = "sortDir", required = false) Optional<String> sortOrder,
+            @RequestParam(value = "page", defaultValue = Constants.DEFAULT_PAGE_NUMBER, required = false) int page,
+            @RequestParam(value = "pageSize", defaultValue = Constants.DEFAULT_PAGE_SIZE, required = false) int pageSize
+    ) {
+        if (sort.isPresent() && sortOrder.isPresent()) {
+            SortParam sortParam = SortParam.fromString(sort.get());
+            Sort.Direction sortDir = Sort.Direction.fromString(sortOrder.get());
+            return groupService.getGroupsFiltered(
+                    filters,
+                    page,
+                    pageSize,
+                    sortParam,
+                    sortDir
+            );
+        }
+        return groupService.getGroupsFiltered(filters, page, pageSize);
     }
 
     @PostMapping("/smallest-coordinates")
