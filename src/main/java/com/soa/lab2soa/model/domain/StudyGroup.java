@@ -6,18 +6,14 @@ import com.soa.lab2soa.model.domain.Semester;
 import com.soa.lab2soa.model.requests.GroupFilters;
 import com.soa.lab2soa.model.requests.GroupView;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -29,6 +25,7 @@ public class StudyGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    @Size(min = 2, message = "Name should be min 2 symbols!")
     private String name; //Поле не может быть null, Строка не может быть пустой
     @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -38,10 +35,13 @@ public class StudyGroup {
     @NotNull
     private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     @NotNull
+    @PositiveOrZero
     private Long studentsCount; //Значение поля должно быть больше 0
     @NotNull
+    @PositiveOrZero
     private Long transferredStudents; //Значение поля должно быть больше 0
     @NotNull
+    @PositiveOrZero
     private Integer averageMark; //Значение поля должно быть больше 0
     @NotNull
     private Semester semesterEnum; //Поле может быть null
