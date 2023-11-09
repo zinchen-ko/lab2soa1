@@ -11,11 +11,12 @@ import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.repo.CoordinatesRepository;
 import com.soa.lab2soa.repo.GroupRepository;
 import com.soa.lab2soa.repo.PersonRepository;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupService {
@@ -121,19 +122,57 @@ public class GroupService {
 
     private StudyGroupPage getGroupsPageFiltered(GroupFilters filters, Pageable pageable) {
         StudyGroup studyGroup = StudyGroup.fromFilters(filters);
+        Date creationDateFilter = filters.getCreationDate();
+        studyGroup.setCreationDate(null);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                .withMatcher("creationDate", ExampleMatcher.GenericPropertyMatcher::startsWith)
                 .withIgnoreCase();
         Example example = Example.of(studyGroup, matcher);
 
-        Page<StudyGroup> studyGroupPage = groupRepository.findAll(example, pageable);
+        Page<StudyGroup> groupsFilteredPage;
+
+        if (creationDateFilter != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(creationDateFilter);
+
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            Date startTime =  cal.getTime();
+
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            Date endTime =  cal.getTime();
+
+            List<StudyGroup> groupFilteredByOther = groupRepository.findAll(example);
+
+            Set<Long> groupIdsFilteredByOther = groupFilteredByOther
+                    .stream()
+                    .map(StudyGroup::getId)
+                    .collect(Collectors.toSet());
+
+            List<Long> groupIdsFiltered = groupRepository.findAllByCreationDateBetween(startTime, endTime)
+                    .stream()
+                    .map(StudyGroup::getId)
+                    .filter(groupIdsFilteredByOther::contains)
+                    .toList();
+
+            groupsFilteredPage = groupRepository.findAllByIds(pageable, groupIdsFiltered);
+        }
+        else {
+            groupsFilteredPage = groupRepository.findAll(example, pageable);
+        }
+
         return new StudyGroupPage(
-                studyGroupPage.toList(),
-                studyGroupPage.getNumber(),
-                studyGroupPage.getSize(),
-                studyGroupPage.getTotalPages(),
-                studyGroupPage.getTotalElements()
+                groupsFilteredPage.toList(),
+                groupsFilteredPage.getNumber(),
+                groupsFilteredPage.getSize(),
+                groupsFilteredPage.getTotalPages(),
+                groupsFilteredPage.getTotalElements()
         );
     }
 

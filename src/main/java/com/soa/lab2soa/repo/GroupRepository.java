@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,4 +34,9 @@ public interface GroupRepository extends JpaRepository<StudyGroup, Long> {
 
     @Query("SELECT c FROM StudyGroup c")
     Page<StudyGroup> findAllPageable(Pageable pageable);
+
+    List<StudyGroup> findAllByCreationDateBetween(Date start, Date end);
+
+    @Query("SELECT c from StudyGroup c WHERE c.id in :ids")
+    Page<StudyGroup> findAllByIds(Pageable pageable, @Param("ids") List<Long> ids);
 }
