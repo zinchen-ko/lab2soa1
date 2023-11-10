@@ -27,7 +27,7 @@ public interface GroupRepository extends JpaRepository<StudyGroup, Long> {
     @Query(
             "SELECT c FROM StudyGroup c WHERE c.transferredStudents < :transferred"
     )
-    Page<StudyGroup> findAllLessThanTransferredStudents(Pageable pageable, @Param("transferred") int transferred);
+    List<StudyGroup> findAllLessThanTransferredStudents(@Param("transferred") int transferred);
 
     Optional<StudyGroup> findByCoordinates(Coordinates coordinates);
 

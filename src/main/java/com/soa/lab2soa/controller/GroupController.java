@@ -160,7 +160,7 @@ public class GroupController {
     }
 
     @PostMapping("transferred-students-less-than/{transferredStudents}")
-    public StudyGroupPage getGroupsTransferredStudentsLess(@PathVariable int transferredStudents) {
+    public List<StudyGroup> getGroupsTransferredStudentsLess(@PathVariable int transferredStudents) {
          try {
              return groupService.getGroupsTransferredStudentsLess(transferredStudents);
          } catch (Exception e) {

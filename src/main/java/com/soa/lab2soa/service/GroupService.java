@@ -188,17 +188,8 @@ public class GroupService {
         return studyGroupList.size();
     }
 
-    public StudyGroupPage getGroupsTransferredStudentsLess(int transferredStudents) {
-        Pageable pageable = PageRequest.of(0, Integer.parseInt(Constants.DEFAULT_PAGE_SIZE));
-        Page<StudyGroup> page =  groupRepository.findAllLessThanTransferredStudents(pageable, transferredStudents);
-
-        return new StudyGroupPage(
-                page.toList(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalPages(),
-                page.getTotalElements()
-        );
+    public List<StudyGroup> getGroupsTransferredStudentsLess(int transferredStudents) {
+        return groupRepository.findAllLessThanTransferredStudents(transferredStudents);
     }
 }
 
