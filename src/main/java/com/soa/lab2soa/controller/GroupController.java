@@ -11,11 +11,14 @@ import com.soa.lab2soa.model.domain.StudyGroup;
 import com.soa.lab2soa.model.requests.SortParam;
 import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.service.GroupService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
@@ -25,6 +28,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/v1/groups")
 @CrossOrigin
+@Validated
 public class GroupController {
 
     private final GroupService groupService;
@@ -45,43 +49,35 @@ public class GroupController {
 
     @PostMapping()
     public StudyGroup addGroup(@Valid @RequestBody GroupView groupView) {
-        try {
-            Date creationDate = new Date();
-            Coordinates coordinates = new Coordinates(groupView.getCoordinates().getX(), groupView.getCoordinates().getY());
-            Person groupAdmin = new Person(
-                    groupView.getGroupAdmin().getName(),
-                    groupView.getGroupAdmin().getBirthday(),
-                    groupView.getGroupAdmin().getWeight(),
-                    groupView.getGroupAdmin().getHeight(),
-                    groupView.getGroupAdmin().getPassportID()
-            );
+        Date creationDate = new Date();
+        Coordinates coordinates = new Coordinates(groupView.getCoordinates().getX(), groupView.getCoordinates().getY());
+        Person groupAdmin = new Person(
+                groupView.getGroupAdmin().getName(),
+                groupView.getGroupAdmin().getBirthday(),
+                groupView.getGroupAdmin().getWeight(),
+                groupView.getGroupAdmin().getHeight(),
+                groupView.getGroupAdmin().getPassportID()
+        );
 
-            StudyGroup studyGroup = new StudyGroup(
-                    groupView.getName(),
-                    coordinates,
-                    creationDate,
-                    groupView.getStudentsCount(),
-                    groupView.getTransferredStudents(),
-                    groupView.getAverageMark(),
-                    Semester.fromString(groupView.getSemester()),
-                    groupAdmin
-            );
-            groupService.save(studyGroup, groupAdmin, coordinates);
-            return studyGroup;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        StudyGroup studyGroup = new StudyGroup(
+                groupView.getName(),
+                coordinates,
+                creationDate,
+                groupView.getStudentsCount(),
+                groupView.getTransferredStudents(),
+                groupView.getAverageMark(),
+                Semester.fromString(groupView.getSemester()),
+                groupAdmin
+        );
+        groupService.save(studyGroup, groupAdmin, coordinates);
+        return studyGroup;
     }
 
     @PutMapping("/{id}")
     public StudyGroup updateGroup(@PathVariable long id, @Valid @RequestBody GroupView groupView) {
-        try {
-            StudyGroup studyGroup = groupService.updateGroup(id, groupView);
-            if (studyGroup == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            return studyGroup;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        StudyGroup studyGroup = groupService.updateGroup(id, groupView);
+        if (studyGroup == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        return studyGroup;
     }
 
     @DeleteMapping("/{id}")

@@ -12,9 +12,14 @@ import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.repo.CoordinatesRepository;
 import com.soa.lab2soa.repo.GroupRepository;
 import com.soa.lab2soa.repo.PersonRepository;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,12 +42,13 @@ public class GroupService {
         return groupRepository.findById(id);
     }
 
-    public void save(StudyGroup studyGroup, Person admin, Coordinates coordinates) {
+    public void save( StudyGroup studyGroup, Person admin, Coordinates coordinates) {
         try {
             personRepository.save(admin);
             coordinatesRepository.save(coordinates);
             groupRepository.save(studyGroup);
-        } catch (Exception e) {
+        } catch (ConstraintViolationException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -70,10 +76,11 @@ public class GroupService {
         studyGroup.setTransferredStudents(groupView.getTransferredStudents());
         studyGroup.setGroupAdmin(admin);
 
-        coordinatesRepository.save(coordinates);
-        personRepository.save(admin);
-        groupRepository.save(studyGroup);
-
+        try{
+            save(studyGroup,admin,coordinates);
+        } catch (ConstraintViolationException e) {
+            throw new RuntimeException(e);
+        }
         return studyGroup;
     }
 
