@@ -12,6 +12,7 @@ import com.soa.lab2soa.model.requests.SortParam;
 import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.service.GroupService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -159,7 +160,7 @@ public class GroupController {
     }
 
     @PostMapping("transferred-students-less-than/{transferredStudents}")
-    public List<StudyGroup> getGroupsTransferredStudentsLess(@PathVariable int transferredStudents) {
+    public StudyGroupPage getGroupsTransferredStudentsLess(@PathVariable int transferredStudents) {
          try {
              return groupService.getGroupsTransferredStudentsLess(transferredStudents);
          } catch (Exception e) {

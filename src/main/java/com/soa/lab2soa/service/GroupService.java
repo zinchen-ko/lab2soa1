@@ -1,5 +1,6 @@
 package com.soa.lab2soa.service;
 
+import com.soa.lab2soa.common.Constants;
 import com.soa.lab2soa.model.domain.Semester;
 import com.soa.lab2soa.model.requests.GroupFilters;
 import com.soa.lab2soa.model.requests.GroupView;
@@ -187,8 +188,17 @@ public class GroupService {
         return studyGroupList.size();
     }
 
-    public List<StudyGroup> getGroupsTransferredStudentsLess(int transferredStudents) {
-        return groupRepository.findAllLessThanTransferredStudents(transferredStudents);
+    public StudyGroupPage getGroupsTransferredStudentsLess(int transferredStudents) {
+        Pageable pageable = PageRequest.of(0, Integer.parseInt(Constants.DEFAULT_PAGE_SIZE));
+        Page<StudyGroup> page =  groupRepository.findAllLessThanTransferredStudents(pageable, transferredStudents);
+
+        return new StudyGroupPage(
+                page.toList(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalPages(),
+                page.getTotalElements()
+        );
     }
 }
 
