@@ -11,6 +11,7 @@ import com.soa.lab2soa.model.domain.StudyGroup;
 import com.soa.lab2soa.model.requests.SortParam;
 import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.service.GroupService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -35,14 +36,14 @@ public class GroupController {
     public StudyGroup getGroup(@PathVariable long id) {
         try {
             Optional<StudyGroup> studyGroup = groupService.getGroupById(id);
-            return studyGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            return studyGroup.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @PostMapping()
-    public StudyGroup addGroup(@RequestBody GroupView groupView) {
+    public StudyGroup addGroup(@Valid @RequestBody GroupView groupView) {
         try {
             Date creationDate = new Date();
             Coordinates coordinates = new Coordinates(groupView.getCoordinates().getX(), groupView.getCoordinates().getY());
@@ -72,10 +73,10 @@ public class GroupController {
     }
 
     @PutMapping("/{id}")
-    public StudyGroup updateGroup(@PathVariable long id, @RequestBody GroupView groupView) {
+    public StudyGroup updateGroup(@PathVariable long id, @Valid @RequestBody GroupView groupView) {
         try {
             StudyGroup studyGroup = groupService.updateGroup(id, groupView);
-            if (studyGroup == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            if (studyGroup == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             return studyGroup;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -86,7 +87,7 @@ public class GroupController {
     public Long deleteGroup(@PathVariable long id) {
         try {
             Optional<Long> groupId = groupService.deleteGroup(id);
-            return groupId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            return groupId.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -152,7 +153,7 @@ public class GroupController {
     public Integer deleteAllByAverageMark(@PathVariable int averageMark) {
         try {
             Optional<Integer> numberOfDeletedGroups = groupService.deleteAllByAverageMark(averageMark);
-            return numberOfDeletedGroups.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            return numberOfDeletedGroups.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

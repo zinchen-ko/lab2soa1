@@ -32,7 +32,7 @@ public class Person {
     @PositiveOrZero
     private Float height;
     @NotNull
-    @Size(min = 10, message = "PassportId should be min 2 symbols!")
+    @Size(min = 10, max = 10, message = "PassportId should be 10 symbols!")
     private String passportID;
 
     public Person(String name, Date birthday, Float weight, Float height, String passportID) {
