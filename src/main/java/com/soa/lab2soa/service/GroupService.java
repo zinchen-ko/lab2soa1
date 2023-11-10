@@ -127,7 +127,6 @@ public class GroupService {
 
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
-                .withMatcher("creationDate", ExampleMatcher.GenericPropertyMatcher::startsWith)
                 .withIgnoreCase();
         Example example = Example.of(studyGroup, matcher);
 
@@ -182,10 +181,10 @@ public class GroupService {
         return studyGroup.get();
     }
 
-    public Optional<Integer> deleteAllByAverageMark(int averageMark) {
+    public Integer deleteAllByAverageMark(int averageMark) {
         List<StudyGroup> studyGroupList = groupRepository.findAllByAverageMark(averageMark);
         groupRepository.deleteAllByAverageMark(averageMark);
-        return Optional.of(studyGroupList.size());
+        return studyGroupList.size();
     }
 
     public List<StudyGroup> getGroupsTransferredStudentsLess(int transferredStudents) {

@@ -152,8 +152,7 @@ public class GroupController {
     @PostMapping("delete-all-by-average-mark/{averageMark}")
     public Integer deleteAllByAverageMark(@PathVariable int averageMark) {
         try {
-            Optional<Integer> numberOfDeletedGroups = groupService.deleteAllByAverageMark(averageMark);
-            return numberOfDeletedGroups.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            return groupService.deleteAllByAverageMark(averageMark);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
