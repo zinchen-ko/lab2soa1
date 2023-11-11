@@ -59,6 +59,7 @@ public class GroupService {
         Optional<StudyGroup> studyGroupOptional = groupRepository.findById(id);
         StudyGroup studyGroup = studyGroupOptional.get();
 
+        System.out.println("UPDATE");
         Person admin = studyGroup.getGroupAdmin();
         admin.setName(groupView.getGroupAdmin().getName());
         admin.setBirthday(groupView.getGroupAdmin().getBirthday());
@@ -77,9 +78,10 @@ public class GroupService {
         studyGroup.setSemesterEnum(Semester.fromString(groupView.getSemester()));
         studyGroup.setTransferredStudents(groupView.getTransferredStudents());
         studyGroup.setGroupAdmin(admin);
-
+        System.out.println("UPDATE");
         try{
             save(studyGroup,admin,coordinates);
+            System.out.println("UPDATE");
         } catch (ConstraintViolationException e) {
             throw new RuntimeException(e);
         }
