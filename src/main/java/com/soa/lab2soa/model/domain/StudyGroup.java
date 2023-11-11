@@ -27,7 +27,7 @@ public class StudyGroup {
     private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     @Size(min = 2, message = "Name should be min 2 symbols!")
     private String name; //Поле не может быть null, Строка не может быть пустой
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch= FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "coordinates_id")
     private Coordinates coordinates; //Поле не может быть null
@@ -45,7 +45,7 @@ public class StudyGroup {
     private Integer averageMark; //Значение поля должно быть больше 0
     @NotNull
     private Semester semesterEnum; //Поле может быть null
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch= FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "person_id")
     private Person groupAdmin; //Поле не может быть null

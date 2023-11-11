@@ -90,7 +90,7 @@ public class GroupController {
         }
     }
 
-    @GetMapping()
+    @GetMapping("/study-groups")
     public StudyGroupPage getGroups(
             @RequestParam(value = "sortBy", required = false) Optional<String> sort,
             @RequestParam(value = "sortDir", required = false) Optional<String> sortOrder,

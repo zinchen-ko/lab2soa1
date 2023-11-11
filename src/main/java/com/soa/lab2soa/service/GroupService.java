@@ -12,6 +12,7 @@ import com.soa.lab2soa.model.responses.StudyGroupPage;
 import com.soa.lab2soa.repo.CoordinatesRepository;
 import com.soa.lab2soa.repo.GroupRepository;
 import com.soa.lab2soa.repo.PersonRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.support.PagedListHolder;
@@ -42,10 +43,11 @@ public class GroupService {
         return groupRepository.findById(id);
     }
 
+    @Transactional
     public void save( StudyGroup studyGroup, Person admin, Coordinates coordinates) {
         try {
-            personRepository.save(admin);
             coordinatesRepository.save(coordinates);
+            personRepository.save(admin);
             groupRepository.save(studyGroup);
         } catch (ConstraintViolationException e) {
             e.printStackTrace();
@@ -64,7 +66,7 @@ public class GroupService {
         admin.setWeight(groupView.getGroupAdmin().getWeight());
         admin.setPassportID(groupView.getGroupAdmin().getPassportID());
 
-        Coordinates coordinates = groupView.getCoordinates();
+        Coordinates coordinates = studyGroup.getCoordinates();
         coordinates.setX(groupView.getCoordinates().getX());
         coordinates.setY(groupView.getCoordinates().getY());
 
